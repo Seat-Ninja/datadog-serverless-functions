@@ -837,7 +837,9 @@ def awslogs_handler(event, context, metadata):
 
     # Create and send structured logs to Datadog
     for log in logs["logEvents"]:
-        yield merge_dicts(log, aws_attributes)
+        message = log["message"]
+        if message.startswith("REPORT RequestId:") or message.startswith("{") or "Task timed out" in message or "exception" in message:
+            yield merge_dicts(log, aws_attributes)
 
 
 # Handle Cloudwatch Events
